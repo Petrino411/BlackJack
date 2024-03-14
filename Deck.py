@@ -14,7 +14,6 @@ class Deck:
         print("Deck_inited")
 
     def deal_card(self):
-        print("sdfsdfsdfsdfasdf",len(self.playing_cards))
         return self.playing_cards.pop()
 
     def shuffle_cards(self):

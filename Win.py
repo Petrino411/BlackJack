@@ -5,7 +5,6 @@ from Deck import Deck
 from Hand import Hand
 from Button import Button
 
-from icecream import ic
 
 
 class Win:

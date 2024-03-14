@@ -11,6 +11,7 @@ from icecream import ic
 class Win:
     def __init__(self):
 
+        self.game_res = None
         self.hide_dealer_card = None
         self.bet = 0
         self.fps = 60
@@ -39,6 +40,8 @@ class Win:
 
         self.hide_dealer_card = True
 
+
+
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -63,16 +66,20 @@ class Win:
             btn3 = Button(self, 1, 1000, 700, 150, 50, "пропустить")
             btn3.process(self)
 
-            game_res = 0
-
             if btn.process(self):
                 self.bet += self.player.make_bet(100)
                 continue_game = True
 
+            if self.bet == 0:
+                self.game_res = -2
+                continue_game = False
+
 
             if continue_game:
+                ic()
+                self.game_res = 0
                 if self.player.money == 0:
-                    game_res = 4
+                    self.game_res = 4
                     continue_game = False
 
                 self.print_hands(self.hide_dealer_card)
@@ -91,57 +98,50 @@ class Win:
                     ic(player_score, dealer_score)
 
                     if player_score > 21:
-                        # self.message("Перебор", (255, 0, 45), 58, 1000, 400, self.sc)
-                        game_res = -1
+                        self.game_res = -1
                         continue_game = False
 
                     elif dealer_score > 21 or player_score > dealer_score:
-                        # self.message("Поздравляем! Вы выиграли!", (255, 0, 45), 58, 1000, 400, self.sc)
-                        # if not game_over:
-                        #
-                        #     game_over = True
                         self.player.money += self.bet * 2
-                        game_res = 1
+                        self.game_res = 1
                         continue_game = False
 
                     elif player_score < dealer_score:
-                        # self.message("Вы проиграли =(", (255, 0, 45), 58, 1000, 400, self.sc)
-                        game_res = 2
+                        self.game_res = 2
                         continue_game = False
 
                     else:
-                        # if not game_over:
-                        #     self.player.money += self.bet
-                        #     game_over = True
-                        # self.message("Ничья.", (255, 0, 45), 58, 1000, 400, self.sc)
                         self.player.money += self.bet
-                        game_res = 3
+                        self.game_res = 3
                         continue_game = False
 
             else:
-                self.message("Сделайте ставку", (255, 0, 45), 58, 800, 650, self.sc)
-                self.over(game_res)
-
+                self.over(self.game_res)
             pygame.display.flip()
-
         pygame.display.update()
         pygame.quit()
         quit()
 
     def over(self, n):
         print("over", n)
-        self.print_hands(self.hide_dealer_card)
+
+        if n == -2:
+            self.message("Сделайте ставку", (255, 0, 45), 58, 800, 650, self.sc)
         if n == -1:
             self.message("Перебор", (255, 0, 45), 58, 800, 650, self.sc)
+            self.print_hands(self.hide_dealer_card)
         elif n == 1:
             self.message("Поздравляем! Вы выиграли!", (255, 0, 45), 58, 800, 650, self.sc)
+            self.print_hands(self.hide_dealer_card)
 
         elif n == 2:
             self.message("Вы проиграли", (255, 0, 45), 58, 800, 650, self.sc)
+            self.print_hands(self.hide_dealer_card)
 
         elif n == 3:
             self.player.money += self.bet
             self.message("Ничья.", (255, 0, 45), 58, 800, 650, self.sc)
+            self.print_hands(self.hide_dealer_card)
         elif n == 4:
             self.message("У вас закончились деньги. Игра окончена.", (255, 0, 45), 58, 800, 650, self.sc)
 

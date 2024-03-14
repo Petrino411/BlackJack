@@ -125,12 +125,12 @@ class Win:
 
     def over(self, n):
         if n == -2:
-            self.message("Сделайте ставку", (255, 0, 45), 58, 800, 650, self.sc)
+            self.message("Сделайте ставку", (255, 0, 45), 60, 800, 650, self.sc)
         if n == -1:
-            self.message("Перебор", (255, 0, 45), 58, 800, 650, self.sc)
+            self.message("Перебор", (255, 0, 45), 60, 800, 650, self.sc)
             self.print_hands(self.hide_dealer_card)
         elif n == 1:
-            self.message("Поздравляем! Вы выиграли!", (255, 0, 45), 58, 800, 650, self.sc)
+            self.message("Поздравляем! Вы выиграли!", (255, 0, 45), 60, 800, 650, self.sc)
             self.print_hands(self.hide_dealer_card)
 
         elif n == 2:

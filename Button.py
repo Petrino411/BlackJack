@@ -16,18 +16,18 @@ class Button:
         self.number_c = [8, 11]
         self.fillColors = {
             # ffffff
-            'normal': '#c0c0c0',
-            'hover': '#666666',
-            'pressed': '#333333',
+            'normal': '#910000',
+            'hover': '#ffbaba',
+            'pressed': '#c7adad',
         }
         self.Color = self.fillColors['normal']
 
         self.buttonSurface = pygame.Surface((self.width, self.height))
 
         self.buttonRect = pygame.Rect(self.x, self.y, self.width, self.height)
-        pygame.draw.rect(self.buttonSurface, (0,225,0), (0, 0, self.width - 1, self.height - 1), 1)
+        pygame.draw.rect(self.buttonSurface, (255,225,255), (0, 0, self.width - 1, self.height - 1), 1)
         self.font = pygame.font.SysFont('Arial', 40)
-        self.buttonSurf = self.font.render(self.text, True, (0, 0, 0))
+        self.buttonSurf = self.font.render(self.text, True, (255, 255, 255))
         self.win.objects.append(self)
 
 

@@ -162,7 +162,7 @@ class Win:
 
     def __create_table(self):
         surf = pygame.image.load("images/table2.jpg").convert_alpha()
-        surf_d = pygame.image.load("images/wood1.jpg").convert_alpha()
+        surf_d = pygame.image.load("images/doska2.jpg").convert_alpha()
         surf_d = pygame.transform.scale(surf_d, (1800, 50))
         pygame.Surface.blit(self.sc, surf, (0, 50))
         pygame.Surface.blit(self.sc, surf_d, (0, 0))

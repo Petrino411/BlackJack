@@ -10,7 +10,11 @@ from icecream import ic
 
 class Win:
     def __init__(self):
+        pygame.init()
+        self.continue_game = False
 
+        self.dealer_hand = None
+        self.player_hand = None
         self.game_res = None
         self.hide_dealer_card = None
         self.bet = 0
@@ -26,8 +30,15 @@ class Win:
 
         self.chips_im = {}
         self.load_chips()
-        print(self.chips_im)
         self.deck = Deck()
+
+        self.btn = Button(self, 300, 700, 150, 50, "ставка", self.make_bet)
+
+        self.btn2 = Button(self, 800, 700, 150, 50, "карта", self.player_step)
+
+        self.btn3 = Button(self, 1000, 700, 150, 50, "пропустить",  self.dealer_step)
+
+        self.btn4 = Button(self, 1200, 700, 150, 50, "новая игра", self.restart)
 
     def main_cycle(self):
         """**********ГЛАВНЫЙ ЦИКЛ ИГРЫ************"""
@@ -35,9 +46,9 @@ class Win:
         self.player_hand = Hand()
         self.dealer_hand = Hand()
         self.deal_initial_cards()
-        pygame.init()
 
-        continue_game = False
+
+        self.continue_game = False
 
         self.hide_dealer_card = True
 
@@ -48,83 +59,70 @@ class Win:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.running = False
+
             self.__create_table()
             self.display_chips()
 
+            for object in self.objects:
+                object.process()
+
             self.message(f"Ваш банк: {self.player.money} $", (0, 255, 0), 28, 300, 20, self.sc)
-
-            btn = Button(self,  300, 700, 150, 50, "ставка")
-
-            btn2 = Button(self,  800, 700, 150, 50, "карта")
-
-            btn3 = Button(self,  1000, 700, 150, 50, "пропустить")
-
-            btn4 = Button(self,  1200, 700, 150, 50, "новая игра")
-
-            if btn.process():
-                self.bet += self.player.make_bet(100)
-                continue_game = True
 
             if self.bet == 0:
                 self.game_res = -2
-                continue_game = False
+                self.continue_game = False
 
-            if continue_game:
-                ic()
+            if self.continue_game:
                 self.game_res = 0
                 if self.player.money < 0:
                     self.game_res = 4
-                    continue_game = False
+                    self.continue_game = False
 
                 self.print_hands(self.hide_dealer_card)
-
-                if self.bet > 0:
-                    if btn2.process():
-                        self.player_step()
-
-                    if self.player_hand.calculate_score() <= 21 and btn3.process():
-                        self.dealer_step()
 
                 player_score = self.player_hand.calculate_score()
                 dealer_score = self.dealer_hand.calculate_score()
 
                 if not self.hide_dealer_card:
-                    ic(player_score, dealer_score)
 
                     if player_score > 21:
                         self.game_res = -1
-                        continue_game = False
+                        self.continue_game = False
 
                     elif dealer_score > 21 or player_score > dealer_score:
                         self.player.money += self.bet * 2
                         self.game_res = 1
-                        continue_game = False
+                        self.continue_game = False
 
                     elif player_score < dealer_score:
                         self.game_res = 2
-                        continue_game = False
+                        self.continue_game = False
 
                     else:
                         self.player.money += self.bet
                         self.game_res = 3
-                        continue_game = False
+                        self.continue_game = False
 
 
             else:
-                if btn4.process():
-                    if self.game_res != 0:
-                        self.game_res = 0
-                        self.bet = 0
-                        self.hide_dealer_card = True
-                        self.deck.shuffle_cards()
-                        self.player_hand = Hand()
-                        self.dealer_hand = Hand()
-                        self.deal_initial_cards()
-                        continue_game = True
-
                 self.over(self.game_res)
 
             pygame.display.flip()
+
+    def restart(self):
+        if self.game_res != 0:
+            self.game_res = 0
+            self.bet = 0
+            self.hide_dealer_card = True
+            self.deck.shuffle_cards()
+            self.player_hand = Hand()
+            self.dealer_hand = Hand()
+            self.deal_initial_cards()
+            self.continue_game = True
+
+    def make_bet(self):
+        self.bet += self.player.make_bet(100)
+        self.continue_game = True
 
     def over(self, n):
         if n == -2:
@@ -148,16 +146,20 @@ class Win:
             self.message("У вас закончились деньги. Игра окончена.", (255, 0, 45), 58, 800, 650, self.sc)
 
     def dealer_step(self):
-        while self.dealer_hand.calculate_score() < 17:
-            self.dealer_hand.add_card(self.deck.deal_card())
-        self.hide_dealer_card = False
-        return False
+        if self.bet > 0:
+            if self.player_hand.calculate_score() <= 21:
+                while self.dealer_hand.calculate_score() < 17:
+                    self.dealer_hand.add_card(self.deck.deal_card())
+                self.hide_dealer_card = False
+                return False
+
 
     def player_step(self):
-        self.player_hand.add_card(self.deck.deal_card())
-        if self.player_hand.calculate_score() > 21:
-            self.hide_dealer_card = False
-            return False
+        if self.bet > 0:
+            self.player_hand.add_card(self.deck.deal_card())
+            if self.player_hand.calculate_score() > 21:
+                self.hide_dealer_card = False
+                return False
 
     def __create_table(self):
         surf = pygame.image.load("images/table2.jpg").convert_alpha()

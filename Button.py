@@ -2,17 +2,17 @@ import pygame
 
 class Button:
 
-    def __init__(self,win, x, y, width, height, text=None, text2=None, image=None, one_press=False):
+    def __init__(self,win, x, y, width, height, text=None, onclickFunction=None, image=None, one_press=False):
         self.win = win
         self.x = x
         self.y = y
+        self.onclickFunction = onclickFunction
         self.width = width
         self.height = height
         self.one_press = one_press
         self.alreadyPressed = False
         self.image = image
         self.text = text
-        self.text2 = text2
         self.number_c = [8, 11]
         self.fillColors = {
             # ffffff
@@ -26,8 +26,9 @@ class Button:
 
         self.buttonRect = pygame.Rect(self.x, self.y, self.width, self.height)
         pygame.draw.rect(self.buttonSurface, (0,225,0), (0, 0, self.width - 1, self.height - 1), 1)
-        font = pygame.font.SysFont('Arial', 40)
-        self.buttonSurf = font.render(self.text, True, (0, 0, 0))
+        self.font = pygame.font.SysFont('Arial', 40)
+        self.buttonSurf = self.font.render(self.text, True, (0, 0, 0))
+        self.win.objects.append(self)
 
 
 
@@ -40,8 +41,10 @@ class Button:
             if pygame.mouse.get_pressed(num_buttons=3)[0]:
                 self.buttonSurface.fill(self.fillColors['pressed'])
                 if self.one_press:
+                    self.onclickFunction()
                     self.alreadyPressed = True
                 elif not self.alreadyPressed:
+                    self.onclickFunction()
                     self.alreadyPressed = True
                 self.alreadyPressed = True
             else:

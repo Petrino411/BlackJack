@@ -12,7 +12,7 @@ class Win:
         self.continue_game = False
         self.dealer_hand = None
         self.player_hand = None
-        self.game_res = None
+        self.game_res = 0
         self.hide_dealer_card = None
         self.bet = 0
         self.fps = 60
@@ -63,8 +63,6 @@ class Win:
             if self.bet == 0:
                 self.game_res = -2
                 self.continue_game = False
-
-
 
             if self.continue_game:
                 self.game_res = 0

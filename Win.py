@@ -124,19 +124,21 @@ class Win:
             self.message("У вас закончились деньги. Игра окончена.", (255, 255, 45), 60, 800, 620, self.sc)
 
     def dealer_step(self):
-        if self.bet > 0:
-            if self.player_hand.calculate_score() <= 21:
-                while self.dealer_hand.calculate_score() < 17:
-                    self.dealer_hand.add_card(self.deck.deal_card())
-                self.hide_dealer_card = False
-                return False
+        if self.continue_game:
+            if self.bet > 0:
+                if self.player_hand.calculate_score() <= 21:
+                    while self.dealer_hand.calculate_score() < 17:
+                        self.dealer_hand.add_card(self.deck.deal_card())
+                    self.hide_dealer_card = False
+                    return False
 
     def player_step(self):
-        if self.bet > 0:
-            self.player_hand.add_card(self.deck.deal_card())
-            if self.player_hand.calculate_score() > 21:
-                self.hide_dealer_card = False
-                return False
+        if self.continue_game:
+            if self.bet > 0:
+                self.player_hand.add_card(self.deck.deal_card())
+                if self.player_hand.calculate_score() > 21:
+                    self.hide_dealer_card = False
+                    return False
     def __create_table(self):
         surf = pygame.image.load("images/table2.jpg").convert_alpha()
         surf_d = pygame.image.load("images/doska2.jpg").convert_alpha()
@@ -170,8 +172,15 @@ class Win:
         self.message("Ваша рука:", (255, 255, 0), 30, 300, 100, self.sc)
 
         i = 0
+        x_threshold = 500
+        x_offset = 100
+        y_offset = 180
         for card in self.player_hand.cards:
-            card.display(self.sc, 150 + i * 120, 180)
+            if x_offset + i * 120 >= x_threshold:
+                x_offset = 100
+                y_offset += 200
+                i = 0
+            card.display(self.sc, x_offset + i * 120, y_offset)
             i += 1
 
         self.message(f"Ваш счет: {self.player_hand.calculate_score()}", (255, 255, 0), 30, 550, 100, self.sc)
@@ -183,11 +192,16 @@ class Win:
             self.dealer_hand.cards[1].display(self.sc, 1000, 180)
         else:
             i = 0
+            x_threshold = 1300
+            x_offset = 880
+            y_offset = 180
             for card in self.dealer_hand.cards:
-                card.display(self.sc, 880 + i * 120, 180)
+                if x_offset + i * 120 >= x_threshold:
+                    x_offset = 880
+                    y_offset += 200
+                    i = 0
+                card.display(self.sc, x_offset + i * 120, y_offset)
                 i += 1
             self.message(f"Счет крупье: {self.dealer_hand.calculate_score()}", (255, 255, 0), 30, 1300, 100, self.sc)
 
 
-def test():
-    print("asdfgasdgasfdg")

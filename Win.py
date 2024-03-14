@@ -31,13 +31,13 @@ class Win:
         self.chips_im = {}
         self.deck = Deck()
 
-        self.btn = Button(self, 300, 700, 150, 50, "ставка", self.make_bet)
+        self.btn = Button(self, 200, 600, 250, 50, "Сделать ставку", self.make_bet)
 
-        self.btn2 = Button(self, 800, 700, 150, 50, "карта", self.player_step)
+        self.btn2 = Button(self, 800, 600, 180, 50, "Взять еще", self.player_step)
 
-        self.btn3 = Button(self, 1000, 700, 150, 50, "пропустить",  self.dealer_step)
+        self.btn3 = Button(self, 1000, 600, 230, 50, "Воздержаться",  self.dealer_step)
 
-        self.btn4 = Button(self, 1200, 700, 150, 50, "новая игра", self.restart)
+        self.btn4 = Button(self, 1300, 600, 200, 50, "Новая игра", self.restart)
 
     def main_cycle(self):
         """**********ГЛАВНЫЙ ЦИКЛ ИГРЫ************"""
@@ -125,12 +125,12 @@ class Win:
 
     def over(self, n):
         if n == -2:
-            self.message("Сделайте ставку", (255, 0, 45), 60, 800, 650, self.sc)
+            self.message("Сделайте ставку", (255, 255, 0), 60, 800, 250, self.sc)
         if n == -1:
-            self.message("Перебор", (255, 0, 45), 60, 800, 650, self.sc)
+            self.message("Перебор!", (0, 0, 0), 60, 800, 350, self.sc)
             self.print_hands(self.hide_dealer_card)
         elif n == 1:
-            self.message("Поздравляем! Вы выиграли!", (255, 0, 45), 60, 800, 650, self.sc)
+            self.message("Поздравляем! Вы выиграли!", (255, 255, 45), 60, 800, 650, self.sc)
             self.print_hands(self.hide_dealer_card)
 
         elif n == 2:

@@ -27,10 +27,11 @@ class Win:
         self.chips_im = {}
         self.load_chips()
         print(self.chips_im)
+        self.deck = Deck()
 
     def main_cycle(self):
         """**********ГЛАВНЫЙ ЦИКЛ ИГРЫ************"""
-        self.deck = Deck()
+
         self.player_hand = Hand()
         self.dealer_hand = Hand()
         self.deal_initial_cards()
@@ -39,8 +40,6 @@ class Win:
         continue_game = False
 
         self.hide_dealer_card = True
-
-
 
         while self.running:
             for event in pygame.event.get():
@@ -52,21 +51,17 @@ class Win:
             self.__create_table()
             self.display_chips()
 
-            player_score = 0
-            dealer_score = 0
-
             self.message(f"Ваш банк: {self.player.money} $", (0, 255, 0), 28, 300, 20, self.sc)
 
-            btn = Button(self, 1, 300, 700, 150, 50, "ставка")
-            btn.process(self)
+            btn = Button(self,  300, 700, 150, 50, "ставка")
 
-            btn2 = Button(self, 1, 800, 700, 150, 50, "карта")
-            btn2.process(self)
+            btn2 = Button(self,  800, 700, 150, 50, "карта")
 
-            btn3 = Button(self, 1, 1000, 700, 150, 50, "пропустить")
-            btn3.process(self)
+            btn3 = Button(self,  1000, 700, 150, 50, "пропустить")
 
-            if btn.process(self):
+            btn4 = Button(self,  1200, 700, 150, 50, "новая игра")
+
+            if btn.process():
                 self.bet += self.player.make_bet(100)
                 continue_game = True
 
@@ -74,21 +69,20 @@ class Win:
                 self.game_res = -2
                 continue_game = False
 
-
             if continue_game:
                 ic()
                 self.game_res = 0
-                if self.player.money == 0:
+                if self.player.money < 0:
                     self.game_res = 4
                     continue_game = False
 
                 self.print_hands(self.hide_dealer_card)
 
                 if self.bet > 0:
-                    if btn2.process(self):
+                    if btn2.process():
                         self.player_step()
 
-                    if self.player_hand.calculate_score() <= 21 and btn3.process(self):
+                    if self.player_hand.calculate_score() <= 21 and btn3.process():
                         self.dealer_step()
 
                 player_score = self.player_hand.calculate_score()
@@ -115,16 +109,24 @@ class Win:
                         self.game_res = 3
                         continue_game = False
 
+
             else:
+                if btn4.process():
+                    if self.game_res != 0:
+                        self.game_res = 0
+                        self.bet = 0
+                        self.hide_dealer_card = True
+                        self.deck.shuffle_cards()
+                        self.player_hand = Hand()
+                        self.dealer_hand = Hand()
+                        self.deal_initial_cards()
+                        continue_game = True
+
                 self.over(self.game_res)
+
             pygame.display.flip()
-        pygame.display.update()
-        pygame.quit()
-        quit()
 
     def over(self, n):
-        print("over", n)
-
         if n == -2:
             self.message("Сделайте ставку", (255, 0, 45), 58, 800, 650, self.sc)
         if n == -1:
@@ -214,56 +216,6 @@ class Win:
                 i += 1
             self.message(f"Счет крупье: {self.dealer_hand.calculate_score()}", (255, 255, 0), 28, 1000, 400, self.sc)
 
-    def play_game(self):
-        if self.continue_game and self.player.money > 0:
-            print("\nУ вас", self.player.money, "долларов в банке.")
 
-            self.deck.shuffle_cards()
-            self.player_hand = Hand()
-            self.dealer_hand = Hand()
-            self.deal_initial_cards()
-
-            bet = self.player.make_bet(100)
-
-            if bet > 0:
-
-                self.step = False
-
-                # Игрок делает свой ход
-                if self.step:
-                    choice = False
-                    # choice = input("\nХотите взять еще карту? (да/нет): ").lower()
-                    if choice:
-                        self.player_hand.add_card(self.deck.deal_card())
-                        if self.player_hand.calculate_score() > 21:
-                            self.print_hands()
-                            print("У вас перебор! Вы проиграли.")
-                            self.step = False
-                    else:
-                        self.step = False
-
-                if self.player_hand.calculate_score() <= 21:
-                    while self.dealer_hand.calculate_score() < 17:
-                        self.dealer_hand.add_card(self.deck.deal_card())
-                    self.print_hands(hide_dealer_card=False)
-
-                    player_score = self.player_hand.calculate_score()
-                    dealer_score = self.dealer_hand.calculate_score()
-
-                    if dealer_score > 21 or player_score > dealer_score:
-                        print("Поздравляем! Вы выиграли.")
-                        self.message("Поздравляем! Вы выиграли!", (255, 0, 45), 58, 1000, 400, self.sc)
-                        self.player.money += 2 * bet
-                    elif player_score < dealer_score:
-                        print("Вы проиграли.")
-                        self.message("Вы проиграли =(", (255, 0, 45), 58, 1000, 400, self.sc)
-                    else:
-                        print("Ничья.")
-                        self.player.money += bet
-                        self.message("Ничья.", (255, 0, 45), 58, 1000, 400, self.sc)
-
-                if self.player.money == 0:
-                    print("У вас закончились деньги. Игра окончена.")
-                    self.message("У вас закончились деньги. Игра окончена.", (255, 0, 45), 58, 1000, 400, self.sc)
-
-                self.continue_game = True
+def test():
+    print("asdfgasdgasfdg")

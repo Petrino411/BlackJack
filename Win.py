@@ -63,6 +63,9 @@ class Win:
             if self.bet == 0:
                 self.game_res = -2
                 self.continue_game = False
+
+
+
             if self.continue_game:
                 self.game_res = 0
                 if self.player.money < 0:
@@ -71,6 +74,12 @@ class Win:
                 self.print_hands(self.hide_dealer_card)
                 player_score = self.player_hand.calculate_score()
                 dealer_score = self.dealer_hand.calculate_score()
+
+                if player_score == 21:
+                        self.game_res = 1
+                        self.continue_game = False
+                        self.hide_dealer_card = False
+
                 if not self.hide_dealer_card:
                     if player_score > 21:
                         self.game_res = -1

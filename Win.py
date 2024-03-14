@@ -23,12 +23,12 @@ class Win:
 
         self.sc = pygame.display.set_mode((self.width_sc, self.height_sc))
 
+
         self.clock = pygame.time.Clock()
         self.running = True
         self.player = Player()
 
         self.chips_im = {}
-        self.load_chips()
         self.deck = Deck()
 
         self.btn = Button(self, 300, 700, 150, 50, "ставка", self.make_bet)
@@ -60,7 +60,7 @@ class Win:
                         self.running = False
 
             self.__create_table()
-            self.display_chips()
+
 
             for object in self.objects:
                 object.process()

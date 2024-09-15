@@ -1,8 +1,9 @@
 import pygame
 
+
 class Button:
 
-    def __init__(self,win, x, y, width, height, text=None, onclickFunction=None, image=None, one_press=False):
+    def __init__(self, win, x, y, width, height, text=None, onclickFunction=None, image=None, one_press=False):
         self.win = win
         self.x = x
         self.y = y
@@ -25,12 +26,10 @@ class Button:
         self.buttonSurface = pygame.Surface((self.width, self.height))
 
         self.buttonRect = pygame.Rect(self.x, self.y, self.width, self.height)
-        pygame.draw.rect(self.buttonSurface, (255,225,255), (0, 0, self.width - 1, self.height - 1), 1)
+        pygame.draw.rect(self.buttonSurface, (255, 225, 255), (0, 0, self.width - 1, self.height - 1), 1)
         self.font = pygame.font.SysFont('Arial', 40)
         self.buttonSurf = self.font.render(self.text, True, (255, 255, 255))
         self.win.objects.append(self)
-
-
 
     def process(self):
         """функция меняет внешний вид кнопки и проверяет нажание и наведение мыши на нее"""
@@ -55,6 +54,3 @@ class Button:
                                                   self.buttonRect.height / 2 - self.buttonSurf.get_rect().height / 2])
         self.win.sc.blit(self.buttonSurface, self.buttonRect)
         return self.alreadyPressed
-
-
-

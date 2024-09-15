@@ -10,12 +10,11 @@ class Win:
     def __init__(self):
         pygame.init()
         self.continue_game = False
-        self.dealer_hand = None
-        self.player_hand = None
+        self.dealer_hand = Hand()
+        self.player_hand = Hand()
         self.game_res = 0
         self.hide_dealer_card = None
         self.bet = 0
-        self.fps = 60
         self.objects = []
         self.width_sc, self.height_sc = 1550, 800
 
@@ -25,24 +24,17 @@ class Win:
         self.running = True
         self.player = Player()
 
-
         self.chips_im = {}
         self.deck = Deck()
 
         self.btn = Button(self, 200, 700, 250, 50, "Сделать ставку", self.make_bet)
-
         self.btn2 = Button(self, 800, 700, 180, 50, "Взять еще", self.player_step)
-
         self.btn3 = Button(self, 1000, 700, 230, 50, "Воздержаться", self.dealer_step)
-
         self.btn4 = Button(self, 1300, 700, 200, 50, "Новая игра", self.restart)
 
     def main_cycle(self):
         """**********ГЛАВНЫЙ ЦИКЛ ИГРЫ************"""
-        self.player_hand = Hand()
-        self.dealer_hand = Hand()
         self.deal_initial_cards()
-
         self.continue_game = False
 
         self.hide_dealer_card = True
@@ -74,9 +66,9 @@ class Win:
                 dealer_score = self.dealer_hand.calculate_score()
 
                 if player_score == 21:
-                        self.game_res = 1
-                        self.continue_game = False
-                        self.hide_dealer_card = False
+                    self.game_res = 1
+                    self.continue_game = False
+                    self.hide_dealer_card = False
 
                 if not self.hide_dealer_card:
                     if player_score > 21:
@@ -95,7 +87,8 @@ class Win:
                         self.continue_game = False
             else:
                 self.over(self.game_res)
-            pygame.display.flip()
+            pygame.display.update()
+
     def restart(self):
         if self.game_res != 0:
             self.game_res = 0
@@ -106,25 +99,25 @@ class Win:
             self.dealer_hand = Hand()
             self.deal_initial_cards()
             self.continue_game = True
+
     def make_bet(self):
         self.bet += self.player.make_bet(100)
         self.continue_game = True
+
     def over(self, n):
         if n == -2:
             self.message("Сделайте ставку", (255, 255, 0), 60, 800, 250, self.sc)
-        if n == -1:
+        elif n == -1:
             self.message("Перебор!", (255, 255, 45), 60, 800, 620, self.sc)
             self.print_hands(self.hide_dealer_card)
         elif n == 1:
             self.message("Поздравляем! Вы выиграли!", (255, 255, 45), 60, 800, 620, self.sc)
             self.print_hands(self.hide_dealer_card)
-
         elif n == 2:
             self.message("Вы проиграли", (255, 255, 45), 60, 800, 620, self.sc)
             self.print_hands(self.hide_dealer_card)
 
         elif n == 3:
-            self.player.money += self.bet
             self.message("Ничья.", (255, 255, 45), 60, 800, 620, self.sc)
             self.print_hands(self.hide_dealer_card)
         elif n == 4:
@@ -146,29 +139,34 @@ class Win:
                 if self.player_hand.calculate_score() > 21:
                     self.hide_dealer_card = False
                     return False
+
     def __create_table(self):
         surf = pygame.image.load("images/table2.jpg").convert_alpha()
         surf_d = pygame.image.load("images/doska2.jpg").convert_alpha()
         surf_d = pygame.transform.scale(surf_d, (1800, 50))
         pygame.Surface.blit(self.sc, surf, (0, 50))
         pygame.Surface.blit(self.sc, surf_d, (0, 0))
+
     def load_chips(self):
         chips = [1, 5, 10, 25, 50, 100, 500, 1000, 5000, 10000]
         for i in range(len(chips)):
             self.chips_im[chips[i]] = pygame.transform.scale(
                 pygame.image.load(f"images/chips/{chips[i]}.png").convert_alpha(), (55, 55))
+
     def display_chips(self):
         if self.chips_im is not {}:
             i = 0
             for key, value in self.chips_im.items():
                 pygame.Surface.blit(self.sc, value, (500 + 60 * i, 500))
                 i += 1
+
     def message(self, msg, color, size, x, y, sc):
         """Функция будет показывать сообщение в окне"""
         font_style = pygame.font.SysFont('arial', size)
         text = font_style.render(msg, True, color)  # оформление
         text_rect = text.get_rect(center=(x, y))
         sc.blit(text, text_rect)
+
     def deal_initial_cards(self):
         self.player_hand.add_card(self.deck.deal_card())
         self.player_hand.add_card(self.deck.deal_card())
@@ -210,5 +208,3 @@ class Win:
                 card.display(self.sc, x_offset + i * 120, y_offset)
                 i += 1
             self.message(f"Счет крупье: {self.dealer_hand.calculate_score()}", (255, 255, 0), 30, 1300, 100, self.sc)
-
-

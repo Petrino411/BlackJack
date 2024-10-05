@@ -21,8 +21,6 @@ class Win:
         self.b1 = Button(self, 30, 30, 400, 100, 'Button One (onePress)', self.myFunction)
         self.b2 = Button(self, 30, 140, 400, 100, 'Button Two (multiPress)', self.myFunction, True)
 
-
-
     def play(self):
 
         while True:

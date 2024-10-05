@@ -11,7 +11,7 @@ class Button:
         self.height = height
         self.one_press = one_press
         self.alreadyPressed = False
-        self.image = image
+        self.image = pygame.image.load(image).convert_alpha() if image is not None else None
         self.text = text
         self.number_c = [8, 11]
         self.fillColors = {
@@ -20,14 +20,14 @@ class Button:
             'hover': '#ffbaba',
             'pressed': '#c7adad',
         }
-        self.Color = self.fillColors['normal']
+        self.Color = self.fillColors['normal'] if self.image is None else None
 
         self.buttonSurface = pygame.Surface((self.width, self.height))
 
         self.buttonRect = pygame.Rect(self.x, self.y, self.width, self.height)
-        pygame.draw.rect(self.buttonSurface, (255,225,255), (0, 0, self.width - 1, self.height - 1), 1)
+
         self.font = pygame.font.SysFont('Arial', 40)
-        self.buttonSurf = self.font.render(self.text, True, (255, 255, 255))
+        self.buttonSurf = self.font.render(self.text, True, (255, 255, 255)) if self.image is None else self.font.render("", True, (255, 255, 255))
         self.win.objects.append(self)
 
 
@@ -35,11 +35,11 @@ class Button:
     def process(self):
         """функция меняет внешний вид кнопки и проверяет нажание и наведение мыши на нее"""
         mouse_pos = pygame.mouse.get_pos()
-        self.buttonSurface.fill(self.fillColors['normal'])
+        self.buttonSurface.fill(self.fillColors['normal']) if self.image is None else self.buttonSurface.set_colorkey((0, 0, 0))
         if self.buttonRect.collidepoint(mouse_pos):
-            self.buttonSurface.fill(self.fillColors['hover'])
+            self.buttonSurface.fill(self.fillColors['hover']) if self.image is None else self.buttonSurface.set_colorkey((0, 0, 0))
             if pygame.mouse.get_pressed(num_buttons=3)[0]:
-                self.buttonSurface.fill(self.fillColors['pressed'])
+                self.buttonSurface.fill(self.fillColors['pressed']) if self.image is None else self.buttonSurface.set_colorkey((0, 0, 0))
                 if self.one_press:
                     self.onclickFunction()
                     self.alreadyPressed = True
@@ -49,12 +49,22 @@ class Button:
                 self.alreadyPressed = True
             else:
                 self.alreadyPressed = False
+        if self.image is not None:
+            self.buttonSurface.set_colorkey((0, 0, 0))
+            img = pygame.transform.scale(self.image, (self.width, self.height))
+            self.buttonSurface.blit(img, (0,0))
 
-        pygame.draw.rect(self.buttonSurface, self.Color, (0, 0, self.width - 1, self.height - 1), 2)
         self.buttonSurface.blit(self.buttonSurf, [self.buttonRect.width / 2 - self.buttonSurf.get_rect().width / 2,
                                                   self.buttonRect.height / 2 - self.buttonSurf.get_rect().height / 2])
         self.win.sc.blit(self.buttonSurface, self.buttonRect)
+
         return self.alreadyPressed
+
+
+
+
+
+
 
 
 
